@@ -1,1 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/ORCLPDB1
+    username: BATCH
+    password: admin
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
 
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG

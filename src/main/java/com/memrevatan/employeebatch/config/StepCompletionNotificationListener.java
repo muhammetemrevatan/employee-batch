@@ -1,18 +1,27 @@
 package com.memrevatan.employeebatch.config;
 
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
+import com.memrevatan.employeebatch.entity.Employee;
+import com.memrevatan.employeebatch.entity.EmployeeDetail;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.SkipListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JobCompletionNotificationListener implements JobExecutionListener {
+@Slf4j
+public class StepCompletionNotificationListener implements SkipListener<Employee, EmployeeDetail> {
+
     @Override
-    public void beforeJob(JobExecution jobExecution) {
-        System.out.println("Job started");
+    public void onSkipInRead(Throwable t) {
+        // TODO document why this method is empty
     }
 
     @Override
-    public void afterJob(JobExecution jobExecution) {
-        System.out.println("Job finished");
+    public void onSkipInWrite(EmployeeDetail item, Throwable t) {
+        log.error("Skipped during write: " + item.getName());
+    }
+
+    @Override
+    public void onSkipInProcess(Employee item, Throwable t) {
+        // TODO document why this method is empty
     }
 }

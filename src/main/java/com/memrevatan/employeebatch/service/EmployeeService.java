@@ -11,6 +11,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -37,6 +38,7 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
+    @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
     public void startBatch() {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("date", new Date().toString())

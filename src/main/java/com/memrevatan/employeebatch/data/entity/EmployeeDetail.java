@@ -1,9 +1,6 @@
 package com.memrevatan.employeebatch.data.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -15,6 +12,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class EmployeeDetail implements Serializable {
     @Id
     @GeneratedValue(generator = "UUID")

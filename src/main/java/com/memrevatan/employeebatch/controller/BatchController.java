@@ -14,7 +14,7 @@ public class BatchController {
     private final BatchService batchService;
 
     @PostMapping
-    public void startBatch() {
+    public void startBatch() throws Exception {
         batchService.startBatch();
     }
 }

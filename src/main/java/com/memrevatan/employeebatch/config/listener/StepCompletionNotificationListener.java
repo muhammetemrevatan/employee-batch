@@ -12,16 +12,16 @@ public class StepCompletionNotificationListener implements SkipListener<Employee
 
     @Override
     public void onSkipInRead(Throwable t) {
-        // TODO document why this method is empty
+        log.warn("Skipped during read");
     }
 
     @Override
     public void onSkipInWrite(EmployeeDetail item, Throwable t) {
-        log.error("Skipped during write: " + item.getName());
+        log.warn("Skipped during write: {}", item);
     }
 
     @Override
     public void onSkipInProcess(Employee item, Throwable t) {
-        // TODO document why this method is empty
+        log.warn("Skipped during process: {}", item);
     }
 }

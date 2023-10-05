@@ -21,18 +21,14 @@ public class BatchService {
     private final JobLauncher jobLauncher;
     private final Job job;
 
-    @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
-    public void startBatch() {
+    @Scheduled(fixedRate = 30 * 1000)
+    public void startBatch() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("date", new Date().toString())
                 .addLong("id", 123L)
                 .toJobParameters();
 
-        try {
-            jobLauncher.run(job, jobParameters);
-        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
-                 JobParametersInvalidException e) {
-            throw new RuntimeException(e);
-        }
+
+        jobLauncher.run(job, jobParameters);
     }
 }

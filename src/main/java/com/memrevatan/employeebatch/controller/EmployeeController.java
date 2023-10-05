@@ -25,7 +25,7 @@ public class EmployeeController {
         return employeeService.getAllEmployees();
     }
 
-    @PutMapping
+    @PostMapping("/batch")
     public void startBatch() {
         employeeService.startBatch();
     }

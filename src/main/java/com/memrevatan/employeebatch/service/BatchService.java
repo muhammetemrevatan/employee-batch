@@ -22,7 +22,7 @@ public class BatchService {
     private final JobLauncher jobLauncher;
     private final Job job;
 
-    @Scheduled(fixedRate = 30 * 1000)
+    @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
     public void startBatch() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString(VariableUtil.DATE, new Date().toString())

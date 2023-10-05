@@ -9,4 +9,5 @@ public class BatchUtil {
     public static final String EMPLOYEE_JOB = "employeeJob";
     public static final Integer CONCURRENCY_LIMIT = 10;
     public static final Integer CHUNK = 10;
+    public static final Integer PAGE_SIZE = 100;
 }

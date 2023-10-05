@@ -68,7 +68,7 @@ public class EmployeeBatch {
                     employee.setSalary(rs.getBigDecimal(VariableUtil.SALARY));
                     return employee;
                 })
-                .pageSize(100)
+                .pageSize(BatchUtil.PAGE_SIZE)
                 .build();
 
         reader.afterPropertiesSet();

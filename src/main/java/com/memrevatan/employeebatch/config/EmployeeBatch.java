@@ -6,6 +6,9 @@ import com.memrevatan.employeebatch.config.listener.StepCompletionNotificationLi
 import com.memrevatan.employeebatch.config.processor.EmployeeProcessor;
 import com.memrevatan.employeebatch.data.entity.Employee;
 import com.memrevatan.employeebatch.data.entity.EmployeeDetail;
+import com.memrevatan.employeebatch.util.BatchUtil;
+import com.memrevatan.employeebatch.util.QueryUtil;
+import com.memrevatan.employeebatch.util.VariableUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -43,26 +46,26 @@ public class EmployeeBatch {
     @Bean
     public JdbcPagingItemReader<Employee> reader() throws Exception {
         Map<String, Order> sortKeys = new HashMap<>(1);
-        sortKeys.put("guid", Order.ASCENDING);
+        sortKeys.put(VariableUtil.GUID, Order.ASCENDING);
 
         SqlPagingQueryProviderFactoryBean pagingQueryProvider = new SqlPagingQueryProviderFactoryBean();
         pagingQueryProvider.setDataSource(dataSource);
-        pagingQueryProvider.setSelectClause("SELECT guid, name, country, gender, salary");
-        pagingQueryProvider.setFromClause("FROM BATCH.EMPLOYEE");
+        pagingQueryProvider.setSelectClause(QueryUtil.SELECT_CLAUSE);
+        pagingQueryProvider.setFromClause(QueryUtil.FROM);
         pagingQueryProvider.setSortKeys(sortKeys);
-        pagingQueryProvider.setDatabaseType("ORACLE");
+        pagingQueryProvider.setDatabaseType(QueryUtil.DB_TYPE);
 
         JdbcPagingItemReader<Employee> reader = new JdbcPagingItemReaderBuilder<Employee>()
-                .name("employeeReader")
+                .name(BatchUtil.EMPLOYEE_READER)
                 .dataSource(dataSource)
                 .queryProvider(Objects.requireNonNull(pagingQueryProvider.getObject()))
                 .rowMapper((rs, rowNum) -> {
                     Employee employee = new Employee();
-                    employee.setGuid(rs.getString("guid"));
-                    employee.setName(rs.getString("name"));
-                    employee.setCountry(rs.getString("country"));
-                    employee.setGender(rs.getString("gender"));
-                    employee.setSalary(rs.getBigDecimal("salary"));
+                    employee.setGuid(rs.getString(VariableUtil.GUID));
+                    employee.setName(rs.getString(VariableUtil.NAME));
+                    employee.setCountry(rs.getString(VariableUtil.COUNTRY));
+                    employee.setGender(rs.getString(VariableUtil.GENDER));
+                    employee.setSalary(rs.getBigDecimal(VariableUtil.SALARY));
                     return employee;
                 })
                 .pageSize(100)
@@ -92,7 +95,7 @@ public class EmployeeBatch {
         JdbcBatchItemWriter<EmployeeDetail> writer = new JdbcBatchItemWriter<>();
 
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql("INSERT INTO employee_detail (GUID, NAME, CURRENCY, BRANCH) VALUES (:guid, :name, :currency, :branch)");
+        writer.setSql(QueryUtil.INSERT_INTO_EMPLOYEE_DETAIL);
         writer.setDataSource(dataSource);
 
         return writer;
@@ -101,8 +104,8 @@ public class EmployeeBatch {
     @Bean
     @Lazy
     public Step employeeStep() throws Exception {
-        return stepBuilderFactory.get("employeeStep")
-                .<Employee, EmployeeDetail>chunk(10)
+        return stepBuilderFactory.get(BatchUtil.EMPLOYEE_STEP)
+                .<Employee, EmployeeDetail>chunk(BatchUtil.CHUNK)
                 .reader(reader())
                 .processor(employeeProcessor())
                 .writer(writer())
@@ -117,7 +120,7 @@ public class EmployeeBatch {
     @Bean
     @Lazy
     public Job employeeJob(JobCompletionNotificationListener listener) throws Exception {
-        return jobBuilderFactory.get("employeeJob")
+        return jobBuilderFactory.get(BatchUtil.EMPLOYEE_JOB)
                 .listener(listener)
                 .flow(employeeStep())
                 .end()
@@ -127,7 +130,7 @@ public class EmployeeBatch {
     @Bean
     public TaskExecutor taskExecutor() {
         SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor();
-        asyncTaskExecutor.setConcurrencyLimit(10);
+        asyncTaskExecutor.setConcurrencyLimit(BatchUtil.CONCURRENCY_LIMIT);
         return asyncTaskExecutor;
     }
 

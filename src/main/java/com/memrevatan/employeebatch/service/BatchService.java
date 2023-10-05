@@ -1,5 +1,6 @@
 package com.memrevatan.employeebatch.service;
 
+import com.memrevatan.employeebatch.util.VariableUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -24,8 +25,8 @@ public class BatchService {
     @Scheduled(fixedRate = 30 * 1000)
     public void startBatch() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("date", new Date().toString())
-                .addLong("id", 123L)
+                .addString(VariableUtil.DATE, new Date().toString())
+                .addLong(VariableUtil.ID, 123L)
                 .toJobParameters();
 
 

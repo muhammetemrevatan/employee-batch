@@ -1,7 +1,7 @@
-package com.memrevatan.employeebatch.config;
+package com.memrevatan.employeebatch.config.processor;
 
-import com.memrevatan.employeebatch.entity.Employee;
-import com.memrevatan.employeebatch.entity.EmployeeDetail;
+import com.memrevatan.employeebatch.data.entity.Employee;
+import com.memrevatan.employeebatch.data.entity.EmployeeDetail;
 import com.memrevatan.employeebatch.enums.Currency;
 import org.springframework.batch.item.ItemProcessor;
 

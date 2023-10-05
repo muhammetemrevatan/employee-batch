@@ -1,7 +1,7 @@
-package com.memrevatan.employeebatch.config;
+package com.memrevatan.employeebatch.config.listener;
 
-import com.memrevatan.employeebatch.entity.Employee;
-import com.memrevatan.employeebatch.entity.EmployeeDetail;
+import com.memrevatan.employeebatch.data.entity.Employee;
+import com.memrevatan.employeebatch.data.entity.EmployeeDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.stereotype.Component;

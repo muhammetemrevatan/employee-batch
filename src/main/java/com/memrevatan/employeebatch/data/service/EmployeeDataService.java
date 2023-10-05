@@ -1,9 +1,9 @@
-package com.memrevatan.employeebatch.repository.service;
+package com.memrevatan.employeebatch.data.service;
 
-import com.memrevatan.employeebatch.dto.EmployeeDto;
-import com.memrevatan.employeebatch.entity.Employee;
+import com.memrevatan.employeebatch.data.dto.EmployeeDto;
+import com.memrevatan.employeebatch.data.entity.Employee;
+import com.memrevatan.employeebatch.data.repository.EmployeeRepository;
 import com.memrevatan.employeebatch.mapper.EmployeeMapper;
-import com.memrevatan.employeebatch.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

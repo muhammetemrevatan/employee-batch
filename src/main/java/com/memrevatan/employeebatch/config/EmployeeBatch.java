@@ -1,8 +1,11 @@
 package com.memrevatan.employeebatch.config;
 
 
-import com.memrevatan.employeebatch.entity.Employee;
-import com.memrevatan.employeebatch.entity.EmployeeDetail;
+import com.memrevatan.employeebatch.config.listener.JobCompletionNotificationListener;
+import com.memrevatan.employeebatch.config.listener.StepCompletionNotificationListener;
+import com.memrevatan.employeebatch.config.processor.EmployeeProcessor;
+import com.memrevatan.employeebatch.data.entity.Employee;
+import com.memrevatan.employeebatch.data.entity.EmployeeDetail;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

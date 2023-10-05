@@ -1,7 +1,7 @@
 package com.memrevatan.employeebatch.mapper;
 
-import com.memrevatan.employeebatch.dto.EmployeeDto;
-import com.memrevatan.employeebatch.entity.Employee;
+import com.memrevatan.employeebatch.data.dto.EmployeeDto;
+import com.memrevatan.employeebatch.data.entity.Employee;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class EmployeeMapper {
 
     public List<EmployeeDto> toDto(List<Employee> employees) {
         List<EmployeeDto> employeeDtoList = new ArrayList<>();
-        for (Employee employee: employees) {
+        for (Employee employee : employees) {
             EmployeeDto employeeDto = new EmployeeDto();
             employeeDto.setGuid(employee.getGuid());
             employeeDto.setName(employee.getName());

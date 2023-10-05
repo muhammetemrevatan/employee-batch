@@ -1,4 +1,4 @@
-package com.memrevatan.employeebatch.dto;
+package com.memrevatan.employeebatch.data.dto;
 
 import lombok.Getter;
 import lombok.Setter;

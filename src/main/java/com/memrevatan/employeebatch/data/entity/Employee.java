@@ -1,20 +1,18 @@
-package com.memrevatan.employeebatch.entity;
+package com.memrevatan.employeebatch.data.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "EMPLOYEE_DETAIL", schema = "BATCH")
+@Table(name = "EMPLOYEE", schema = "BATCH")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class EmployeeDetail {
+public class Employee implements Serializable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -24,6 +22,7 @@ public class EmployeeDetail {
     @Column(name = "guid", updatable = false, nullable = false)
     private String guid;
     private String name;
-    private String currency;
-    private String branch;
+    private String country;
+    private String gender;
+    private BigDecimal salary;
 }

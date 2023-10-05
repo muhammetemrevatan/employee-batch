@@ -1,7 +1,6 @@
 package com.memrevatan.employeebatch.controller;
 
-import com.memrevatan.employeebatch.dto.EmployeeDto;
-import com.memrevatan.employeebatch.entity.Employee;
+import com.memrevatan.employeebatch.data.dto.EmployeeDto;
 import com.memrevatan.employeebatch.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +24,4 @@ public class EmployeeController {
         return employeeService.getAllEmployees();
     }
 
-    @PostMapping("/batch")
-    public void startBatch() {
-        employeeService.startBatch();
-    }
 }

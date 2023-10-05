@@ -1,5 +1,6 @@
 package com.memrevatan.employeebatch.controller;
 
+import com.memrevatan.employeebatch.dto.EmployeeDto;
 import com.memrevatan.employeebatch.entity.Employee;
 import com.memrevatan.employeebatch.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,12 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping
-    public void saveEmployee(@RequestBody Employee employee) {
-        employeeService.saveEmployee(employee);
+    public void saveEmployee(@RequestBody EmployeeDto employeeDto) {
+        employeeService.saveEmployee(employeeDto);
     }
 
     @GetMapping
-    public List<Employee> getAllEmployees() {
+    public List<EmployeeDto> getAllEmployees() {
         return employeeService.getAllEmployees();
     }
 

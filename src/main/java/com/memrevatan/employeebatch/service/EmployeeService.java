@@ -1,6 +1,8 @@
 package com.memrevatan.employeebatch.service;
 
+import com.memrevatan.employeebatch.dto.EmployeeDto;
 import com.memrevatan.employeebatch.entity.Employee;
+import com.memrevatan.employeebatch.mapper.EmployeeMapper;
 import com.memrevatan.employeebatch.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -24,17 +26,19 @@ import java.util.UUID;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final EmployeeMapper mapper;
     private final JobLauncher jobLauncher;
     private final Job job;
 
     @Transactional
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public List<EmployeeDto> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+        return mapper.toDto(employees);
     }
 
     @Transactional
-    public void saveEmployee(Employee employee) {
-        employee.setGuid(UUID.randomUUID().toString());
+    public void saveEmployee(EmployeeDto employeeDto) {
+        Employee employee = mapper.toEntity(employeeDto);
         employeeRepository.save(employee);
     }
 

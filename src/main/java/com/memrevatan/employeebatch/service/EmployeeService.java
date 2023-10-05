@@ -4,6 +4,7 @@ import com.memrevatan.employeebatch.dto.EmployeeDto;
 import com.memrevatan.employeebatch.entity.Employee;
 import com.memrevatan.employeebatch.mapper.EmployeeMapper;
 import com.memrevatan.employeebatch.repository.EmployeeRepository;
+import com.memrevatan.employeebatch.repository.service.EmployeeDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -25,22 +26,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EmployeeService {
 
-    private final EmployeeRepository employeeRepository;
-    private final EmployeeMapper mapper;
+    private final EmployeeDataService employeeDataService;
     private final JobLauncher jobLauncher;
     private final Job job;
 
-    @Transactional
-    public List<EmployeeDto> getAllEmployees() {
-        List<Employee> employees = employeeRepository.findAll();
-        return mapper.toDto(employees);
-    }
 
-    @Transactional
-    public void saveEmployee(EmployeeDto employeeDto) {
-        Employee employee = mapper.toEntity(employeeDto);
-        employeeRepository.save(employee);
-    }
 
     @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
     public void startBatch() {
@@ -55,5 +45,13 @@ public class EmployeeService {
                  JobParametersInvalidException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void saveEmployee(EmployeeDto employeeDto) {
+        employeeDataService.saveEmployee(employeeDto);
+    }
+
+    public List<EmployeeDto> getAllEmployees() {
+        return employeeDataService.getAllEmployees();
     }
 }

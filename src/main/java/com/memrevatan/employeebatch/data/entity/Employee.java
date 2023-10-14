@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "EMPLOYEE", schema = "BATCH")
+@Table(name = "EMPLOYEE")
 @Getter
 @Setter
 public class Employee implements Serializable {

@@ -1,4 +1,4 @@
-package com.memrevatan.employeebatch.config.aspect;
+package com.memrevatan.employeebatch.batch.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

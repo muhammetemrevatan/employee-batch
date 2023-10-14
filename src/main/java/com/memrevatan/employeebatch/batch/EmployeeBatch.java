@@ -1,59 +1,46 @@
-package com.memrevatan.employeebatch.config;
+package com.memrevatan.employeebatch.batch;
 
 
-import com.memrevatan.employeebatch.config.listener.JobCompletionNotificationListener;
-import com.memrevatan.employeebatch.config.listener.StepCompletionNotificationListener;
-import com.memrevatan.employeebatch.config.processor.EmployeeProcessor;
+import com.memrevatan.employeebatch.batch.listener.JobCompletionNotificationListener;
+import com.memrevatan.employeebatch.batch.listener.StepCompletionNotificationListener;
+import com.memrevatan.employeebatch.batch.processor.EmployeeProcessor;
 import com.memrevatan.employeebatch.data.entity.Employee;
 import com.memrevatan.employeebatch.data.entity.EmployeeDetail;
 import com.memrevatan.employeebatch.util.BatchUtil;
 import com.memrevatan.employeebatch.util.QueryUtil;
 import com.memrevatan.employeebatch.util.VariableUtil;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.batch.item.support.SynchronizedItemStreamReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.dao.DuplicateKeyException;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
+@Slf4j
 @Configuration
-@EnableBatchProcessing
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmployeeBatch {
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
+    private final DataSource dataSource;
 
-    private DataSource dataSource;
-    private JobBuilderFactory jobBuilderFactory;
-    private StepBuilderFactory stepBuilderFactory;
-    private StepCompletionNotificationListener listener;
-
-    @Bean
+    @Bean("employeeReader")
+    @StepScope
     public JdbcPagingItemReader<Employee> reader() throws Exception {
-        Map<String, Order> sortKeys = new HashMap<>(1);
-        sortKeys.put(VariableUtil.GUID, Order.ASCENDING);
-
-        SqlPagingQueryProviderFactoryBean pagingQueryProvider = new SqlPagingQueryProviderFactoryBean();
-        pagingQueryProvider.setDataSource(dataSource);
-        pagingQueryProvider.setSelectClause(QueryUtil.SELECT_CLAUSE);
-        pagingQueryProvider.setFromClause(QueryUtil.FROM);
-        pagingQueryProvider.setSortKeys(sortKeys);
-        pagingQueryProvider.setDatabaseType(QueryUtil.DB_TYPE);
+        SqlPagingQueryProviderFactoryBean pagingQueryProvider = QueryUtil.queryProviderFactoryBean(dataSource, QueryUtil.SELECT_CLAUSE, QueryUtil.FROM);
 
         JdbcPagingItemReader<Employee> reader = new JdbcPagingItemReaderBuilder<Employee>()
                 .name(BatchUtil.EMPLOYEE_READER)
@@ -76,21 +63,14 @@ public class EmployeeBatch {
         return reader;
     }
 
-    @Bean
+    @Bean("employeeProcessor")
+    @StepScope
     public EmployeeProcessor employeeProcessor() {
         return new EmployeeProcessor();
     }
 
-//    @Bean
-//    public JdbcBatchItemWriter<EmployeeDetail> writer() {
-//        return new JdbcBatchItemWriterBuilder<Employee>()
-//                .dataSource(dataSource)
-//                .sql("UPDATE BATCH.EMPLOYEE SET name = :name WHERE guid = :guid")
-//                .beanMapped()
-//                .build();
-//    }
-
-    @Bean
+    @Bean("employeeWriter")
+    @StepScope
     public JdbcBatchItemWriter<EmployeeDetail> writer() {
         JdbcBatchItemWriter<EmployeeDetail> writer = new JdbcBatchItemWriter<>();
 
@@ -101,37 +81,29 @@ public class EmployeeBatch {
         return writer;
     }
 
-    @Bean
-    @Lazy
-    public Step employeeStep() throws Exception {
+    @Bean(BatchUtil.EMPLOYEE_STEP)
+    public Step employeeStep(StepCompletionNotificationListener stepCompletionNotificationListener) throws Exception {
+        SynchronizedItemStreamReader<Employee> synchronizedReader = new SynchronizedItemStreamReader<>();
+        synchronizedReader.setDelegate(reader());
         return stepBuilderFactory.get(BatchUtil.EMPLOYEE_STEP)
                 .<Employee, EmployeeDetail>chunk(BatchUtil.CHUNK)
-                .reader(reader())
+                .reader(synchronizedReader)
                 .processor(employeeProcessor())
                 .writer(writer())
                 .faultTolerant()
-                .skipLimit(Integer.MAX_VALUE)
                 .skip(DuplicateKeyException.class)
-                .listener(this.listener)
-                .taskExecutor(taskExecutor())
+                .skipLimit(Integer.MAX_VALUE)
+                .listener(stepCompletionNotificationListener)
                 .build();
     }
 
-    @Bean
-    @Lazy
-    public Job employeeJob(JobCompletionNotificationListener listener) throws Exception {
+    @Bean(BatchUtil.EMPLOYEE_JOB)
+    public Job employeeJob(JobCompletionNotificationListener listener, StepCompletionNotificationListener stepCompletionNotificationListener) throws Exception {
         return jobBuilderFactory.get(BatchUtil.EMPLOYEE_JOB)
                 .listener(listener)
-                .flow(employeeStep())
+                .flow(employeeStep(stepCompletionNotificationListener))
                 .end()
                 .build();
-    }
-
-    @Bean
-    public TaskExecutor taskExecutor() {
-        SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor();
-        asyncTaskExecutor.setConcurrencyLimit(BatchUtil.CONCURRENCY_LIMIT);
-        return asyncTaskExecutor;
     }
 
 }

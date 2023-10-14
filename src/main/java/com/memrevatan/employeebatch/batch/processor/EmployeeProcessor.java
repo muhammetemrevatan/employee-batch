@@ -1,4 +1,4 @@
-package com.memrevatan.employeebatch.config.processor;
+package com.memrevatan.employeebatch.batch.processor;
 
 import com.memrevatan.employeebatch.data.entity.Employee;
 import com.memrevatan.employeebatch.data.entity.EmployeeDetail;

@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "EMPLOYEE_DETAIL", schema = "BATCH")
+@Table(name = "EMPLOYEE_DETAIL")
 @Getter
 @Setter
 @NoArgsConstructor

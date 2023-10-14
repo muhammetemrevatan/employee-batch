@@ -1,4 +1,4 @@
-package com.memrevatan.employeebatch.config.listener;
+package com.memrevatan.employeebatch.batch.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;

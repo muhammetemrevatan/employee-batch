@@ -1,4 +1,9 @@
 spring:
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: never
   datasource:
     url: jdbc:oracle:thin:@localhost:1521/ORCLPDB1
     username: BATCH
@@ -6,7 +11,7 @@ spring:
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
 
 logging:
